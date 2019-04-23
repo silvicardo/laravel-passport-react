@@ -9,9 +9,57 @@
 
 ## Passport Steps
 
+Install the basic authentication system integrated in Laravel and Laravel Passport:
+
 ```bash
 composer require laravel/passport
+php artisan make:auth
+php artisan migrate
+php artisan passport:install
 ```
+
+Add the Laravel\Passport\HasApiTokens trait to our App\User model:
+
+```php
+<?php
+use Laravel\Passport\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, Notifiable;
+?>
+``
+
+Add the Passport::routes method within the boot method of our app/AuthServiceProvider like that:
+```php
+<?php
+public function boot()
+{
+    $this->registerPolicies();
+
+    Passport::routes();
+}
+?>
+```
+ set the driver option of the api authentication guard to passport like that:
+
+```php
+<?php
+'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'api' => [
+        'driver' => 'passport',
+        'provider' => 'users',
+    ],
+],
+?>
+```
+
+
 
 # Postman testing
 
