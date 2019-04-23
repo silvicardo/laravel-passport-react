@@ -51,7 +51,7 @@ class AuthController extends Controller
     //If db query DID NOT return a result...
     if (!$user) {
 
-      $response = 'User does not exist';
+      $response = ['error' => 'User does not exist'];
       return response($response, 422);
     }
 
@@ -85,7 +85,7 @@ class AuthController extends Controller
     $token->revoke();
 
     //send response with 200 STATUS and logout feedback
-    $response = 'You have been succesfully logged out!';
+    $response = ['success' => 'You have been succesfully logged out!'];
     return response($response, 200);
 
   }
