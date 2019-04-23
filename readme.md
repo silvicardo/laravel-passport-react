@@ -108,21 +108,23 @@ All routes will use ForceJsonResponse middleware, protected ones also use 'auth:
 
 Set Headers:
 
+```
 Content-Type: application/json
 X-Requested-With: XMLHttpRequest
+```
 
 ## Getting Started
 
 Clone the project repository by running the command below if you use SSH
 
 ```bash
-git clone git@github.com:silvicardo/laravel-react-redux-tasksman.git
+git clone https://github.com/silvicardo/laravel-passport-react.git
 ```
 
 If you use https, use this instead
 
 ```bash
-git clone https://github.com/silvicardo/laravel-react-redux-tasksman.git
+git clone https://github.com/silvicardo/laravel-passport-react.git
 ```
 
 After cloning, run:
