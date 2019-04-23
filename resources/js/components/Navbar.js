@@ -1,7 +1,24 @@
 import React, { Component, Fragment } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
 class Navbar extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.logoutBtnClicked = this.logoutBtnClicked.bind(this);
+  }
+
+  logoutBtnClicked(){
+    this.props.logoutClicked(
+      () => {//success
+        this.props.history.push('/');
+      },
+      () => {
+        this.props.history.push('/');
+      }
+    )
+  }
 
   render() {
 
@@ -12,10 +29,11 @@ class Navbar extends Component {
         <Fragment>
           <NavLink className="nav-item nav-link" to="/register">Register</NavLink>
           <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
+
         </Fragment>
       )
     } else {
-      authLinks = (<NavLink className="nav-item nav-link" to="/logout">Logout</NavLink>)
+      authLinks = (<button className="ml-5 btn btn-danger" onClick={this.logoutBtnClicked}>Logout</button>)
     }
 
     return (
@@ -38,4 +56,4 @@ class Navbar extends Component {
 
 
 
-export default Navbar;
+export default withRouter(Navbar);

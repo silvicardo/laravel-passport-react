@@ -12,6 +12,7 @@ import Navbar from './Navbar';
 import HomePage from './HomePage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
+import ErrorsAlert from './ErrorsAlert';
 
 /**********************/
 /* MAIN APP COMPONENT */
@@ -28,9 +29,12 @@ export default class App extends Component {
       isLoggedIn: false,
       currentUser: {},
       token: null,
+      errors:[] //logout errors
     }
 
     this.registrationSubmit = this.registrationSubmit.bind(this);
+    this.logoutClicked = this.logoutClicked.bind(this);
+    this.loginClicked = this.loginClicked.bind(this);
   }
 
   //callbacks will be used in the descendant component
@@ -52,15 +56,94 @@ export default class App extends Component {
 
   }
 
+  logoutClicked(successCallback, errorCallback){
+
+    axios(
+     {
+       url: '/api/logout',
+       method: 'get',
+       headers: {
+         'X-Requested-With': 'XMLHttpRequest',
+         'Authorization' : 'Bearer ' + this.state.token},
+       responseType: 'json',
+     }
+   )
+    .then(({data}) => {
+
+      successCallback();
+
+      this.setState({
+        isLoggedIn: false,
+        currentUser: {},
+        token: null,
+      })
+
+    })
+    .catch((error) => {
+      errorCallback();
+      console.log(error.response.data);
+      this.setState((prevState, props) => ({
+        errors: [...prevState.errors, error.response.data.message]
+      }));
+    })
+
+  }
+
+  loginClicked(formData,successCallback, errorCallback){
+
+    const reqData = {'password' : formData.password, 'email' : formData.email };
+
+    const axiosData = Object.keys(reqData).map(function(key) {
+    return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key])
+    }).join('&')
+
+    axios(
+     {
+       url: '/api/login',
+       method: 'post',
+       headers: {
+         'X-Requested-With': 'XMLHttpRequest',
+         'Authorization' : 'Bearer ' + this.state.token
+       },
+       data: axiosData,
+       responseType: 'json',
+     }
+   )
+    .then(({data}) => {
+      console.log(data)
+      successCallback();
+
+      this.setState({ isLoggedIn: true, ...data})
+
+    })
+    .catch((error) => {
+      errorCallback(error);
+
+    })
+
+  }
+
   render(){
+
+    console.log('HigherState says', this.state);
+
+    //HANDLE INPUT ERRORS
+
+    let userFeedback;
+
+    if (this.state.errors.length !== 0) {
+
+      userFeedback = (<ErrorsAlert {...this.state} />)
+    }
 
     return(
       <Fragment>
-        <Navbar isLoggedIn={this.state.isLoggedIn}/>
+        <Navbar isLoggedIn={this.state.isLoggedIn} logoutClicked={this.logoutClicked}/>
         <div className="container py-5">
+          {userFeedback}
         <Switch>
           <Route exact path="/" render={(props) =><HomePage {...this.state}/ >}/>
-          <Route exact path="/login" render={(props) => (<LoginPage {...props}/>)}/>
+          <Route exact path="/login" render={(props) => (<LoginPage onLogin={this.loginClicked} {...props} {...this.state}/>)}/>
           <Route exact path="/register" render={(props) => (<RegisterPage onRegister={this.registrationSubmit} {...props}/>)}/>
         </Switch>
         </div>

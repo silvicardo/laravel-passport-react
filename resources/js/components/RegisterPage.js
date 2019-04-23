@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ErrorsAlert from './ErrorsAlert';
 import axios from 'axios';
 
 class RegisterPage extends Component {
@@ -52,13 +53,7 @@ class RegisterPage extends Component {
 
     if (errors.length !== 0) {
 
-      userFeedback = (
-        <div className="alert alert-warning" role="alert">
-          <ul className="list-unstyled">
-            {errors.map((err, index) => (<li key={index}>{err}</li>))}
-          </ul>
-        </div>
-      )
+      userFeedback = (<ErrorsAlert errors={errors} />)
     }
 
     return (
