@@ -28,7 +28,7 @@ class AuthController extends Controller
     //Validation success...
 
     //Password Hash
-    $request['password'] = Hash::make($request['password']);
+    $request['password'] = \Hash::make($request['password']);
 
     //Create user from request
     $newUser = User::create($request->toArray());
@@ -57,7 +57,7 @@ class AuthController extends Controller
 
     //else if User EXISTS
     //Check that passwordInRequest === passwordInDatabase
-    if (Hash::check($request->password, $user->password)) {
+    if (\Hash::check($request->password, $user->password)) {
 
         //PASSWORD OK
         //Create a token for currentUser for this "session"

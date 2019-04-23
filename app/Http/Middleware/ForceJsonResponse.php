@@ -14,7 +14,7 @@ class ForceJsonResponse
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         //All routes returns a JSON
         $request->headers->set('Accept','application/json');
