@@ -15,34 +15,41 @@ class RegisterPage extends Component {
       errors: [],
     }
 
+    //binding to preserve the context of this
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.reachTheDashboard = this.reachTheDashboard.bind(this);
+    this.manageRegistrationErrors = this.manageRegistrationErrors.bind(this);
 
   }
 
   handleChange(e) {
+
     this.setState({[e.target.name] : e.target.value });
+
+  }
+
+  reachTheDashboard(){
+
+    this.props.history.push('/dashboard');
+
+  }
+
+  manageRegistrationErrors(errors) {
+
+    //display errors to the user
+    this.setState({ errors });
+
   }
 
   onSubmit(e) {
 
     e.preventDefault();
 
-    this.props.onRegister(this.state,
-    () => {//SUCCESS CALLBACK
-      //back to homePage
-      this.props.history.push('/');
-    },
-    (errors) => {//FAIL
-      //display errors to the user
-      console.log(errors);
-      this.setState({ errors })
-    }
-
-   )
+    //register(success, fail)
+    this.props.onRegister(this.state, this.reachTheDashboard, this.manageRegistrationErrors);
 
   }
-
 
   render() {
 
@@ -63,14 +70,12 @@ class RegisterPage extends Component {
 
       <h1>Register now!</h1>
 
-
-
       <form
        onSubmit={this.onSubmit}
       >
         <div className="form-group">
           <label htmlFor="nameInput">Your name</label>
-          <input onChange={this.handleChange} type="text" name="name" value={this.state.name} className="form-control" id="nameInput" aria-describedby="emailHelp" placeholder="Enter email"/>
+          <input onChange={this.handleChange} type="text" name="name" value={this.state.name} className="form-control" id="nameInput" aria-describedby="emailHelp" placeholder="Enter your name"/>
         </div>
         <div className="form-group">
           <label htmlFor="emailInput">Email address</label>

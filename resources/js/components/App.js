@@ -14,6 +14,9 @@ import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import DashboardPage from './DashboardPage';
 import ErrorsAlert from './ErrorsAlert';
+//Helpers
+import * as axiosHelper from './helpers/axiosHelper';
+
 
 /**********************/
 /* MAIN APP COMPONENT */
@@ -27,109 +30,93 @@ export default class App extends Component {
     //This is the Highest level state
 
     this.state = {
+      appName: 'Laravel-Passport+React',
       isLoggedIn: false,
       currentUser: {},
       token: null,
       errors:[] //logout errors
     }
 
+    //binding to preserve the context of this
     this.registrationSubmit = this.registrationSubmit.bind(this);
     this.logoutClicked = this.logoutClicked.bind(this);
     this.loginClicked = this.loginClicked.bind(this);
+
   }
 
   //callbacks will be used in the descendant component
-  registrationSubmit(data, successCallback, errorCallback){
+  async registrationSubmit(formData, successCallback, errorCallback){
 
-    axios.post('/api/register', {...data})
-    .then(({data}) => {
+    console.log('formData', formData);
+
+    try {
+
+      const {data} = await axios.post('/api/register', {...formData});
+
+      console.log(data);
 
       successCallback();
-      //data contains currentUser and token
-      this.setState({ isLoggedIn: true, ...data})
 
-    })
-    .catch((error) => {
+      //data contains currentUser and token
+      this.setState({ isLoggedIn: true, ...data });
+
+    } catch(error){
+
       console.log(error.response.data);
+
       errorCallback(error.response.data.errors);
 
-    })
+    }
 
   }
 
-  logoutClicked(successCallback, errorCallback){
+  //callbacks will be used in the descendant component
+  async logoutClicked(successCallback, errorCallback){
 
-    axios(
-     {
-       url: '/api/logout',
-       method: 'get',
-       headers: {
-         'X-Requested-With': 'XMLHttpRequest',
-         'Authorization' : 'Bearer ' + this.state.token},
-       responseType: 'json',
-     }
-   )
-    .then(({data}) => {
+    try {
+
+      const {data} = await axios(axiosHelper.getLogoutConfig(this.state.token));
 
       successCallback();
 
-      this.setState({
-        isLoggedIn: false,
-        currentUser: {},
-        token: null,
-      })
+      this.setState({ isLoggedIn: false, currentUser: {}, token: null });
 
-    })
-    .catch((error) => {
+    } catch(error){
+
       errorCallback();
+
       console.log(error.response.data);
-      this.setState({
-        errors: [error.response.data.message]
-      });
-    })
+
+      this.setState({ errors: [error.response.data.message]});
+
+    }
 
   }
 
-  loginClicked(formData,successCallback, errorCallback){
+  //callbacks will be used in the descendant component
+  async loginClicked(formData,successCallback, errorCallback){
 
-    const reqData = {'password' : formData.password, 'email' : formData.email };
+    try {
 
-    const axiosData = Object.keys(reqData).map(function(key) {
-    return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key])
-    }).join('&')
+      const { data } = await axios(axiosHelper.getLoginConfig(formData));
 
-    console.log('axios data', axiosData);
+      console.log('login response.data ', data);
 
-    axios(
-     {
-       url: '/api/login',
-       method: 'post',
-       headers: {
-         'X-Requested-With': 'XMLHttpRequest',
-         'Authorization' : 'Bearer ' + this.state.token
-       },
-       data: axiosData,
-       responseType: 'json',
-     }
-   )
-    .then(({data}) => {
-      console.log(data)
       successCallback();
 
-      this.setState({ isLoggedIn: true, ...data})
+      this.setState({ isLoggedIn: true, ...data });
 
-    })
-    .catch((error = {error: "Unprocessable entity"}) => {
+    } catch(error) {
 
-      errorCallback(error.response.data);
+      errorCallback( error && error.response.data || {error: "Unprocessable entity"});
 
-    })
+    }
 
   }
 
   render(){
 
-    console.log('HigherState says', this.state);
+    console.log('AppComponent state ', this.state);
 
     //HANDLE INPUT ERRORS
 
@@ -137,30 +124,52 @@ export default class App extends Component {
 
     if (this.state.errors.length !== 0) {
 
-      userFeedback = (<ErrorsAlert {...this.state} />)
+      userFeedback = (<ErrorsAlert {...this.state} />);
+
     }
 
     return(
       <Fragment>
-        <Navbar isLoggedIn={this.state.isLoggedIn} logoutClicked={this.logoutClicked}/>
+        <Navbar
+        isLoggedIn={this.state.isLoggedIn}
+        logoutClicked={this.logoutClicked}
+        appName={this.state.appName}
+        />
         <div className="container py-5">
           {userFeedback}
         <Switch>
-          <Route exact path="/" render={(props) =><HomePage {...this.state}/ >}/>
-          <Route exact path="/login" render={(props) => (<LoginPage onLogin={this.loginClicked} {...props} {...this.state}/>)}/>
-          <Route exact path="/register" render={(props) => (<RegisterPage onRegister={this.registrationSubmit} {...props}/>)}/>
-          <Route exact path="/dashboard" render={(props) => (<DashboardPage {...props} user={this.state.currentUser} />)}/>
+          {/* HomePage receives the entireState to show user info */}
+          <Route
+          exact path="/"
+          render={(props) =><HomePage {...this.state}/>}
+          />
+          {/* LoginPage receives props to manage routing */}
+          <Route
+          exact path="/login"
+          render={(props) => (<LoginPage onLogin={this.loginClicked} {...props} />)}
+          />
+          {/* RegisterPage receives props to manage routing */}
+          <Route
+          exact path="/register"
+          render={(props) => (<RegisterPage onRegister={this.registrationSubmit} {...props}/>)}
+          />
+          {/* DashboardPage receives props to manage routing + the currentUser from the state */}
+          <Route
+          exact path="/dashboard"
+          render={(props) => (<DashboardPage {...props} user={this.state.currentUser} />)}
+          />
         </Switch>
         </div>
       </Fragment>
     )
+
   }
 
 }
 
-/**********************/
+/***********************/
 /* REACT-DOM -> RENDER */
-/**********************/
+/***********************/
 
 if (document.getElementById('app')) {
     ReactDOM.render(
