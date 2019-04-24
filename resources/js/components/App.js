@@ -12,6 +12,7 @@ import Navbar from './Navbar';
 import HomePage from './HomePage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
+import DashboardPage from './DashboardPage';
 import ErrorsAlert from './ErrorsAlert';
 
 /**********************/
@@ -82,9 +83,9 @@ export default class App extends Component {
     .catch((error) => {
       errorCallback();
       console.log(error.response.data);
-      this.setState((prevState, props) => ({
-        errors: [...prevState.errors, error.response.data.message]
-      }));
+      this.setState({
+        errors: [error.response.data.message]
+      });
     })
 
   }
@@ -96,6 +97,8 @@ export default class App extends Component {
     const axiosData = Object.keys(reqData).map(function(key) {
     return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key])
     }).join('&')
+
+    console.log('axios data', axiosData);
 
     axios(
      {
@@ -116,8 +119,9 @@ export default class App extends Component {
       this.setState({ isLoggedIn: true, ...data})
 
     })
-    .catch((error) => {
-      errorCallback(error);
+    .catch((error = {error: "Unprocessable entity"}) => {
+
+      errorCallback(error.response.data);
 
     })
 
@@ -145,6 +149,7 @@ export default class App extends Component {
           <Route exact path="/" render={(props) =><HomePage {...this.state}/ >}/>
           <Route exact path="/login" render={(props) => (<LoginPage onLogin={this.loginClicked} {...props} {...this.state}/>)}/>
           <Route exact path="/register" render={(props) => (<RegisterPage onRegister={this.registrationSubmit} {...props}/>)}/>
+          <Route exact path="/dashboard" render={(props) => (<DashboardPage {...props} user={this.state.currentUser} />)}/>
         </Switch>
         </div>
       </Fragment>

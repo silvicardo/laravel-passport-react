@@ -31,16 +31,15 @@ onSubmit(e) {
 
   this.props.onLogin(this.state,
   () => {//SUCCESS CALLBACK
-    //back to homePage
-    this.props.history.push('/');
+    //reach User Dashboard
+    this.props.history.push('/dashboard');
   },
   (error) => {//FAIL
     //display errors to the user
-    console.log(error);
-    console.log(error.response.data);
-    this.setState((prevState, props) => ({
-      errors: [...prevState.errors, error.response.data.error]
-    }))
+
+    this.setState({
+      errors: [error.error]
+    })
   }
 
  )

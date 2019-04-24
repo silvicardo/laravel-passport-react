@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+//withRouter gives us the ability to navigate
+//even if the component is not within a Route
 import { NavLink, withRouter } from 'react-router-dom';
 
 class Navbar extends Component {
@@ -9,15 +11,13 @@ class Navbar extends Component {
     this.logoutBtnClicked = this.logoutBtnClicked.bind(this);
   }
 
+  backToTheHomePage(){
+    this.props.history.push('/');
+  }
+
   logoutBtnClicked(){
-    this.props.logoutClicked(
-      () => {//success
-        this.props.history.push('/');
-      },
-      () => {
-        this.props.history.push('/');
-      }
-    )
+    //Perform Logout and then reach the homeepage anyway (success, fail)
+    this.props.logoutClicked(backToTheHomePage,backToTheHomePage);
   }
 
   render() {

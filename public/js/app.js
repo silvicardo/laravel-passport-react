@@ -65688,18 +65688,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _HomePage__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./HomePage */ "./resources/js/components/HomePage.js");
 /* harmony import */ var _LoginPage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./LoginPage */ "./resources/js/components/LoginPage.js");
 /* harmony import */ var _RegisterPage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RegisterPage */ "./resources/js/components/RegisterPage.js");
-/* harmony import */ var _ErrorsAlert__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ErrorsAlert */ "./resources/js/components/ErrorsAlert.js");
+/* harmony import */ var _DashboardPage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./DashboardPage */ "./resources/js/components/DashboardPage.js");
+/* harmony import */ var _ErrorsAlert__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ErrorsAlert */ "./resources/js/components/ErrorsAlert.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -65731,6 +65724,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
  //React Router DOM
 
  //Components
+
 
 
 
@@ -65812,10 +65806,8 @@ function (_Component) {
         errorCallback();
         console.log(error.response.data);
 
-        _this3.setState(function (prevState, props) {
-          return {
-            errors: [].concat(_toConsumableArray(prevState.errors), [error.response.data.message])
-          };
+        _this3.setState({
+          errors: [error.response.data.message]
         });
       });
     }
@@ -65831,6 +65823,7 @@ function (_Component) {
       var axiosData = Object.keys(reqData).map(function (key) {
         return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key]);
       }).join('&');
+      console.log('axios data', axiosData);
       axios({
         url: '/api/login',
         method: 'post',
@@ -65848,8 +65841,11 @@ function (_Component) {
         _this4.setState(_objectSpread({
           isLoggedIn: true
         }, data));
-      })["catch"](function (error) {
-        errorCallback(error);
+      })["catch"](function () {
+        var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+          error: "Unprocessable entity"
+        };
+        errorCallback(error.response.data);
       });
     }
   }, {
@@ -65862,7 +65858,7 @@ function (_Component) {
       var userFeedback;
 
       if (this.state.errors.length !== 0) {
-        userFeedback = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ErrorsAlert__WEBPACK_IMPORTED_MODULE_7__["default"], this.state);
+        userFeedback = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ErrorsAlert__WEBPACK_IMPORTED_MODULE_8__["default"], this.state);
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Navbar__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -65892,6 +65888,14 @@ function (_Component) {
             onRegister: _this5.registrationSubmit
           }, props));
         }
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
+        exact: true,
+        path: "/dashboard",
+        render: function render(props) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_DashboardPage__WEBPACK_IMPORTED_MODULE_7__["default"], _extends({}, props, {
+            user: _this5.state.currentUser
+          }));
+        }
       }))));
     }
   }]);
@@ -65910,6 +65914,33 @@ function (_Component) {
 if (document.getElementById('app')) {
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null)), document.getElementById('app'));
 }
+
+/***/ }),
+
+/***/ "./resources/js/components/DashboardPage.js":
+/*!**************************************************!*\
+  !*** ./resources/js/components/DashboardPage.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var DashboardPage = function DashboardPage(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "jumbotron"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Welcome ", props.user.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Enjoy your stay"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    onClick: function onClick() {
+      props.history.push('/');
+    }
+  }, "Go Back to the Homepage "));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (DashboardPage);
 
 /***/ }),
 
@@ -66024,14 +66055,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ErrorsAlert__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ErrorsAlert */ "./resources/js/components/ErrorsAlert.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -66092,18 +66115,13 @@ function (_Component) {
       e.preventDefault();
       this.props.onLogin(this.state, function () {
         //SUCCESS CALLBACK
-        //back to homePage
-        _this2.props.history.push('/');
+        //reach User Dashboard
+        _this2.props.history.push('/dashboard');
       }, function (error) {
         //FAIL
         //display errors to the user
-        console.log(error);
-        console.log(error.response.data);
-
-        _this2.setState(function (prevState, props) {
-          return {
-            errors: [].concat(_toConsumableArray(prevState.errors), [error.response.data.error])
-          };
+        _this2.setState({
+          errors: [error.error]
         });
       });
     }
@@ -66192,6 +66210,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+ //withRouter gives us the ability to navigate
+//even if the component is not within a Route
 
 
 
@@ -66211,16 +66231,15 @@ function (_Component) {
   }
 
   _createClass(Navbar, [{
+    key: "backToTheHomePage",
+    value: function backToTheHomePage() {
+      this.props.history.push('/');
+    }
+  }, {
     key: "logoutBtnClicked",
     value: function logoutBtnClicked() {
-      var _this2 = this;
-
-      this.props.logoutClicked(function () {
-        //success
-        _this2.props.history.push('/');
-      }, function () {
-        _this2.props.history.push('/');
-      });
+      //Perform Logout and then reach the homeepage anyway (success, fail)
+      this.props.logoutClicked(backToTheHomePage, backToTheHomePage);
     }
   }, {
     key: "render",

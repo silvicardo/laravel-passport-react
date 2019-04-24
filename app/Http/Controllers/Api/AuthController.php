@@ -72,7 +72,7 @@ class AuthController extends Controller
     } else {
 
         //response brings password error
-        $response = "Password missmatch";
+        $response = ['error' => "Password missmatch"];
 
         return response($response, 422);
     }
