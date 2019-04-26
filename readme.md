@@ -34,6 +34,11 @@ Add the Passport::routes method within the boot method of our app/AuthServicePro
 
 ```php
 <?php
+
+use Laravel\Passport\Passport;
+
+...
+
 public function boot()
 {
     $this->registerPolicies();
@@ -42,7 +47,7 @@ public function boot()
 }
 ?>
 ```
- set the driver option of the api authentication guard to passport like that:
+in config/auth set the driver option of the api authentication guard to passport like that:
 
 ```php
 <?php

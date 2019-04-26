@@ -168,7 +168,7 @@ export default class App extends Component {
 }
 
 /***********************/
-/* REACT-DOM -> RENDER */
+/* REACT-DOM -> REN   DER */
 /***********************/
 
 if (document.getElementById('app')) {
